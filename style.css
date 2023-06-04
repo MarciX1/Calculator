@@ -148,7 +148,7 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     place-items: center;
-    gap: 1px;
+    gap: 2px;
     height: 400px;
     width: 100%;
 }
