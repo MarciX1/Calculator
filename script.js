@@ -173,12 +173,15 @@ deleteHistory.addEventListener("click", () => {
 // Backspace -1
 backspaceBtn.addEventListener("click", () => {
 
+    operatorCount++;
+
     if (chars > 0) {
 
         const lastChar = FinalResult.innerHTML.slice(-1);
         const isOperator = ['+', '-', '*', '/', "."].includes(lastChar);
 
         if (isOperator) {
+            operatorCount--;
             operatorCounter();
         } else {
             chars--;
@@ -194,9 +197,9 @@ backspaceBtn.addEventListener("click", () => {
 
 // If operatorCount 0 then increase if 1 then decrease
 function operatorCounter() {
-    if (operatorCount < 1) {
+    if (operatorCount === 0) {
         operatorCount++;
-    } else if (operatorCount > 0) {
+    } else if (operatorCount === 1) {
         operatorCount--;
     }
 }
