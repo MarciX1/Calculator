@@ -39,7 +39,7 @@ body {
     align-items: flex-end;
     flex-direction: column;
     color: var(--blue);
-    padding: 0 30px 0 0;
+    padding: 0 30px;
     gap: 30px;
 }
 
@@ -77,7 +77,6 @@ body {
     position: absolute;
     width: 50%;
     height: 300px;
-    background: transparent;
     left: 0;
     top: 0;
     opacity: 0;
@@ -86,16 +85,12 @@ body {
     transform: translate(-200px, 50px);
     transition: 0.5s ease;
     overflow-y: scroll;
-    overflow: overlay;
+    overflow-x: hidden;
+
 }
 
 .historyContainer::-webkit-scrollbar {
-    width: 5px;
-}
-
-.historyContainer::-webkit-scrollbar-thumb {
-    border-radius: 5px;
-    background: var(--blue);
+    width: 0;
 }
 
 .historyOpen {
@@ -125,10 +120,13 @@ body {
     width: 100%;
     height: auto;
     display: grid;
+    padding: 0 10px;
 }
 
 .historyDivs {
-    margin-left: 10px;
+    height: 30px;
+    width: 150px;
+    overflow: hidden;
 }
 
 .historyButton {
@@ -141,7 +139,7 @@ body {
     justify-content: flex-start;
     align-items: center;
     font-size: 16px;
-    cursor: pointer;;
+    cursor: pointer;
 }
 
 .box-3 {
@@ -183,8 +181,7 @@ body {
     grid-column: span 2;
 }
 
-.dot {
-    grid-column: span 2;
+.dot, .plusAndMinus {
     font-size: 26px;
 }
 
@@ -201,7 +198,7 @@ body {
     opacity: 0.5;
 }
 
-.FinalResultBox, .ResultBox {
+.FinalResultBox, .ResultBox, .h1 {
     width: 100%;
     display: flex;
     justify-content: flex-end;
@@ -210,7 +207,7 @@ body {
 .finalActive {
     opacity: 1;
     animation-delay: 0.3s;
-    animation: opacity0 0.2s ease;
+    animation: opacity0 0.3s ease;
 }
 
 @keyframes opacity0 {

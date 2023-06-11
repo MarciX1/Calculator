@@ -8,9 +8,11 @@ const equalBtn = document.querySelector(".equalBtn");
 const historyDiv = document.querySelector(".history-div");
 const deleteHistory = document.querySelector(".deleteHistory");
 const historyContainer = document.querySelector(".historyContainer");
+const plusAndMinus = document.querySelector(".plusAndMinus");
 
 let chars = 0;
 let operatorCount = 0;
+let plusMinusCount = 0;
 backspaceBtn.classList.add("backspaceBtnDisabled");
 historyBtn.classList.add("historyBtnDisabled");
 
@@ -21,27 +23,25 @@ Buttons.forEach(btns => btns.addEventListener("click", (e) => {
 
         let value = e.target.getAttribute("data-num");
 
-        if (chars === 0 && (value === "*" || value === "/")) {
+        if (chars === 0 && (value === "*" || value === "/" || value === "." || value === "+" || value === "-")) {
         }   else if (value === "+" || value === "-" || value === "*" || value === "/" || value === ".") {
                 if (operatorCount < 1) {
-                    if (chars === 0 && (value === "+" || value === "-" || value === ".")) {
-                        FinalResult.innerHTML = value;
-                    } else {
-                        FinalResult.innerHTML += value;
-                        operatorCount++;
-                    }
+                    FinalResult.innerHTML += value;
+                    operatorCount++;
                 }
         }   else {
                 FinalResult.innerHTML += value;
                 chars++;
                 operatorCount = 0;
                 evalResults();
-                charsCounter(); 
+                charsCounter();
         }
 
     }   else if (chars === 16) {
         alert("Max Chars is 16");
     }
+
+    decChar();
     
 }));
 
@@ -53,13 +53,36 @@ clearBtn.addEventListener("click", () => {
     operatorCounter();
     operatorCount = 0;
     charsCounter();
+    plusMinusCount = 0;
+    decChar();
 });
 
 // Eval results div
 equalBtn.addEventListener("click", () => {
     equalHistory();
     evalResultsFinal();
+    decChar();
+    saveData();
 });
+
+// Put plus before the number and you can change to minus if the counter increased
+plusAndMinus.addEventListener("click", plusAndMinusClick);
+
+function plusAndMinusClick() {
+
+    plusMinusCount++;
+    if (plusMinusCount === 1) { 
+        FinalResult.innerHTML = "-" + FinalResult.innerHTML;
+    } else if (plusMinusCount === 2) {
+        if (FinalResult.innerHTML.startsWith("-")) {
+            FinalResult.innerHTML = FinalResult.innerHTML.replace("-", "+");
+        } else {
+            FinalResult.innerHTML = FinalResult.innerHTML.replace("+", "-");
+        }
+        plusMinusCount = 1;
+    } 
+
+}
 
 // Eval finalresult div
 function evalResultsFinal() {
@@ -74,7 +97,7 @@ function evalResultsFinal() {
     }, 500)
     const timeoutResult = setTimeout(function() {
         Result.classList.remove("resultActive");
-    }, 2000)
+    }, 1000)
 
     if (Number.isInteger(evalResult)) {
         Result.innerHTML = evalResult;
@@ -107,12 +130,10 @@ function evalResults() {
 
 // Equal on click put FinalResult Div to the historyDiv
 function equalHistory() {
-
     const operators = ['+', '-', '*', '/', '.'];
     const includeOperators = operators.some(function(operator) {
         return FinalResult.innerHTML.includes(operator);
     });
-    const lastChars = FinalResult.innerHTML.slice(-1);
 
     if (includeOperators) {
 
@@ -134,26 +155,35 @@ function equalHistory() {
         historyButton.classList.add("historyButton");
         historyButton.innerHTML = FinalResult.innerHTML;
     
-        historyButton.addEventListener("click", () => {
-            FinalResult.innerHTML = historyButton.textContent;
-            Result.innerHTML = FinalResult.innerHTML;   
-            chars = FinalResult.textContent.replace(/[+\-*/.]/g, '').length;
-            charsCounter();
-            if (typeof lastChars === "number") {
-                operatorCount = 1;
-                operatorCounter();
-            } else if (lastChars === includeOperators) {
-                operatorCount = 0;
-                operatorCounter();
-            }
-            
-        });
+        historyButton.addEventListener("click", loadHistory);
 
         historyDivs.appendChild(historyButton);
         historyDiv.appendChild(historyDivs);
         historyBtn.classList.remove("historyBtnDisabled");   
     } 
 
+}
+
+// Paste historyButton texcontent into finalresult.innerhtml
+function loadHistory() {
+    FinalResult.innerHTML = this.textContent;
+    Result.innerHTML = FinalResult.innerHTML;
+    chars = FinalResult.textContent.replace(/[+\-*/.]/g, '').length;
+    const lastChars = FinalResult.innerHTML.slice(-1);
+    const operators = ['+', '-', '*', '/', '.'];
+    const includeOperators = operators.some(function(operator) {
+        return FinalResult.innerHTML.includes(operator);
+    });
+
+    charsCounter();
+    decChar();
+    if (typeof lastChars === "number") {
+      operatorCount = 1;
+      operatorCounter();
+    } else if (lastChars === includeOperators) {
+      operatorCount = 0;
+      operatorCounter();
+    }
 }
 
 // If not contains history button class then can toggle
@@ -168,6 +198,7 @@ deleteHistory.addEventListener("click", () => {
     historyDiv.innerHTML = "";
     historyBtn.classList.add("historyBtnDisabled");
     historyContainer.classList.remove("historyOpen");
+    saveData();
 });  
 
 // Backspace -1
@@ -192,6 +223,7 @@ backspaceBtn.addEventListener("click", () => {
 
     } 
     Result.innerHTML = FinalResult.innerHTML;
+    decChar();
     
 });
 
@@ -212,3 +244,38 @@ function charsCounter() {
         backspaceBtn.classList.remove("backspaceBtnDisabled");
     }
 }
+
+function decChar() {
+    const fontSizeLength = FinalResult.textContent.length;
+    if (fontSizeLength >= 24) {
+        FinalResult.style.fontSize = "1.3em";
+        Result.style.fontSize = "0.76em";
+    }   else if (fontSizeLength >= 16) {
+        FinalResult.style.fontSize = "1.65em";
+        Result.style.fontSize = "0.96em";
+    }   else {
+        FinalResult.style.fontSize = "2em";
+        Result.style.fontSize = "1.17em";
+    }
+}
+
+// HAVE TO UPDATE SAVEDATA AND SHOWTASK!!!!
+function saveData() {
+    const historyContent = historyDiv.innerHTML;
+    localStorage.setItem("historyContent", historyContent);
+}
+
+// When the user go back after that load back historydivs innerhtml
+function showTask() {
+    const historyContent = localStorage.getItem("historyContent");
+    if (historyContent) {
+        historyDiv.innerHTML = historyContent;
+        historyBtn.classList.remove("historyBtnDisabled");
+    }
+
+    const historyButtons = historyDiv.querySelectorAll(".historyButton");
+    historyButtons.forEach((button) => {
+        button.addEventListener("click", loadHistory);
+    });
+}
+showTask();
