@@ -80,7 +80,8 @@ function plusAndMinusClick() {
             FinalResult.innerHTML = FinalResult.innerHTML.replace("+", "-");
         }
         plusMinusCount = 1;
-    } 
+    }
+    evalResults();
 
 }
 
