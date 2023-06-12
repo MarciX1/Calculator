@@ -185,7 +185,7 @@ function loadHistory() {
       operatorCount = 0;
       operatorCounter();
     }
-    plusMinusCount = 1;
+    plusAndMinusClick();
 }
 
 // If not contains history button class then can toggle
