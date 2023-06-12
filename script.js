@@ -85,6 +85,14 @@ function plusAndMinusClick() {
 
 }
 
+function checkPlusMinus() {
+    if (FinalResult.innerHTML.startsWith("-")) {
+        plusMinusCount = 1;
+    } else if (FinalResult.innerHTML.startsWith("+")) {
+        plusMinusCount = 1;
+    }
+}
+
 // Eval finalresult div
 function evalResultsFinal() {
     let evalResult = eval(FinalResult.textContent);
@@ -178,6 +186,7 @@ function loadHistory() {
 
     charsCounter();
     decChar();
+    checkPlusMinus();
     if (typeof lastChars === "number") {
       operatorCount = 1;
       operatorCounter();
@@ -185,7 +194,7 @@ function loadHistory() {
       operatorCount = 0;
       operatorCounter();
     }
-    plusAndMinusClick();
+    
 }
 
 // If not contains history button class then can toggle
